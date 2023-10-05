@@ -8,42 +8,51 @@ from matplotlib.animation import FuncAnimation, writers
 # from mat
 from scipy.signal import savgol_filter
 
-FRAME_RATE = 30 # fps
-TIME_LENGTH = 60 # seconds
+import config_setup
+import config_ani
+
+FRAME_RATE = config_ani.FRAME_RATE # fps
+TIME_LENGTH = config_ani.ENDING_TIME - config_ani.STARTING_TIME # seconds
 FRAME_INTERVAL = math.floor(1000 / FRAME_RATE) # ms
 FRAME_LENGTH = FRAME_RATE * TIME_LENGTH # frames
+STARTING_TIME = config_ani.STARTING_TIME # The time at which the data starts recording
+ENDING_TIME = config_ani.ENDING_TIME # The time at which the data stops recording
+# A time varaible to track how far through the animation we are in seconds, used to determine what data to put into the plots
 
-#FEATUREADD: make an ability to plot the final graph to see if it looks like what we want
+plt.rcParams['animation.ffmpeg_path'] = config_setup.FFMPEG_PATH
+m = pd.read_csv(os.path.join(config_setup.DATA_WORKING_DIR, config_ani.DATA_FILE_NAME))
 
-#FIXME: make this read from a config file
-plt.rcParams['animation.ffmpeg_path'] = r"C:\Users\AA\Desktop\FFMPEG\bin\ffmpeg.exe"
-
-#FIXME: make this read from a config file
-# Needs to be configured depending on what headings are given to the data
-m = pd.read_csv("working_directory/lcf1.csv")
-
-STARTING_TIME = m['Timestamp'][0] # The time at which the data starts recording
-
-# FIXME: TO BE CLEANED UP AND MODULARIZED
-fig = plt.figure()
-ax1 = fig.add_subplot(111)
-# ax1.set_xlim(0, 20)
-# ax1.set_ylim(-100, 3000)
+# Set the dimensions of the plot
+plt.rcParams["figure.figsize"] = (config_ani.PLOT_WIDTH, config_ani.PLOT_HEIGHT)
 
 # Timestap as a base refference
 time_refference = m['Timestamp']
 plotted_time = []
 time_cursor = 0 # The index of the current time refference, starts at -1 since no data is plotted
-
-# A time varaible to track how far through the animation we are in seconds, used to determine what data to put into the plots
 time = STARTING_TIME
 
-# Each data item
+fig, _ = plt.subplots()
+
+class PlotAxis:
+    def __init__(self, name, unit, min, max,primary=False):
+        self.name = name
+        self.unit = unit
+        if primary:
+            self.axis = plt.gca()
+        else:
+            self.axis = plt.twinx()
+        self.axis.set_ylabel(f"{name} ({unit})")
+        self.axis.set_xlabel('Time (s)')
+        self.axis.set_xlim(STARTING_TIME, ENDING_TIME)
+        self.axis.set_ylim(min, max)
+
+
+# Each data item that will have a curve
 class PlotItem:
-    def __init__(self, display_name, csv_colum, unit, color,filtered=True):
+    def __init__(self, display_name, csv_colum, axis_class, color,filtered=True):
         self.name = display_name
         self.csv_colum = csv_colum
-        self.unit = unit
+        self.axis = axis_class.axis
         self.color = color
 
         self.data = m[csv_colum]
@@ -52,34 +61,38 @@ class PlotItem:
         self.plotted_data = [] # Starts off empty and grows over time
 
         # Create the empty line object that will be filled out as the animiation runs
-        self.line = ax1.plot([], [], label = f"{display_name} ({unit})", color = color)[0]
+        self.line = self.axis.plot([], [], label = f"{display_name}", color = color)[0]
 
     def tick(self): # a tick pushing the data forward one recording frame, and this might happen multiple times per animation frame'
         self.plotted_data.append(self.data[time_cursor])
         self.line.set_data(plotted_time, self.plotted_data)
 
-lines = []
+################# CHANGE ME TO SET WHAT IS PLOTTED #######################
+# the axies should all be on the same figure, just have differnt y axies for different units
+unit_axies = { # a dictionary for axies where the key is the unit it's in, and the value is the axis object
+    "psi/lbf": PlotAxis("Pressure / Thrust", "psi/lbf", 0, 1000,primary=True),
+    "kg": PlotAxis("Mass", "kg", 0, 25),
+}
 
-tankMass = PlotItem("Honeywell S-type - Ox Tank", "Honeywell S-type - Ox Tank", "kg", "black")
-# ccPressure = PlotItem("PT-3 CC 2", "PT-3 CC", "psi", "orange")
-# # ccPressureUnfiltered = PlotItem("PT-3 CC Unfiltered", "PT-3 CC", "psi", "green",filtered=False)
-# thrust = PlotItem("Thrust", "Thrust", "lbf", "red")
+## IMPORTANT: THERE MUST BE AT LEAST ONE PRIMARY AXIS, IN THE UNIT AXIES OTHERWISE THINGS MIGHT LOOK WACK
 
-lines.append(tankMass)
-# lines.append(ccPressure)
-# # lines.append(ccPressureUnfiltered)
-# lines.append(thrust)
+lines = [
+    PlotItem("Honeywell S-type - Ox Tank", "Honeywell S-type - Ox Tank", unit_axies["kg"], "black"),
+    PlotItem("PT-4 Injector Oxidizer", "PT-4 Injector Oxidizer", unit_axies["psi/lbf"], "blue"),
+]
 
-#FIXME: make it easy to set which axies which lines are on
-ax1.set_xlim(STARTING_TIME, STARTING_TIME+TIME_LENGTH) # add a way to change what time interval we're looking at easily, espcially given that often the recorded data starts like at very big numbers
-#FIXME: config the axies
-ax1.set_ylim(0, 25)
-ax1.set_ylabel('psi/lbf')
+###########################################################################
 
-#FIXME: legends for the axies need to be better (x axis)
+################# CHANGE ME TO CHANGE ESTHEICS ABOUT THE PLOT #######################
 
-ax1.legend(loc = 'upper left')
-# ax2.legend(loc = 'upper right')
+figure_title = "LCF1" # The title of the plot
+
+grid = True
+
+legend_location = "lower left" # Where the legend is located, see https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.legend.html for more info
+global_font = {'family':  'helvetica'} # The font of the legend
+
+###########################################################################
 
 
 def animate(frame_number):
@@ -98,20 +111,37 @@ def animate(frame_number):
 
     # each line will be update by the update functions and reflected in the animation
 
+# Generate one together legend for each of the curves
+handles = []
+labels = []
+for axis in unit_axies.values():
+    h, l = axis.axis.get_legend_handles_labels()
+    l_with_units = [f"{l[0]} ({axis.unit})"]
+    handles += h
+    labels += l_with_units
+
+
+# Set all the esthetics of the plot
+plt.title(figure_title, fontdict=global_font)
+plt.legend(handles, labels, loc=legend_location, prop=global_font)
+if grid: plt.grid()
 
 # The interval and frames have to add up to the fps set later for the video to be real-time accurate
 
 # Get the current working directory
-cwd = os.getcwd()
-file = f"{cwd}/working_directory/test.mp4"
+file = os.path.join(config_setup.DATA_WORKING_DIR, f"{config_ani.DATA_FILE_NAME[:-4]}_animated.mp4")
 writer = animation.FFMpegWriter(fps=FRAME_RATE,metadata=dict(artist='Waterloo Rocketry Team')) 
 ani = animation.FuncAnimation(fig, animate, interval = FRAME_INTERVAL, frames = FRAME_LENGTH, repeat = False) 
 print(f"Saving video, this will take {TIME_LENGTH}s...")
-plt.show()
-# ani.save(file, writer=writer) # Comment out this line to get a 'preview' via the matplotlib plot
+ani.save(file, writer=writer) # Comment out this line to get a 'preview' via the matplotlib plot
+# plt.show()
 print('Video saved sucessfully')
 
 
 # The method for this timing to work is that the animation runs at a certain framerate (converted to a time interval), and a time length
 # For each frame, it'll step up the running time variable by the time interval
 # It must then add all the data who's recorded timestamp is smaller than or equal to the running time variable
+
+
+
+#FEATUREADD: make an ability to plot the final graph to see if it looks like what we want
