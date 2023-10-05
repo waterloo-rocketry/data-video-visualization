@@ -8,6 +8,8 @@ PREVIEW = False # Allows the animation to be previewed instead of saving it to a
 # Animtion file config
 DATA_FILE_NAME = "lcf1.csv"
 
+FILTERING_STRENGTH = 50 # The size of the savgol filter window, bigger means its more filtered
+
 # Animation config
 FRAME_RATE = 60 # (fps)
 STARTING_TIME = 2280 # The time of recording timestamps that the data starts (seconds)

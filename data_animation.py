@@ -23,6 +23,8 @@ FRAME_INTERVAL = math.floor(1000 / FRAME_RATE) # ms
 FRAME_LENGTH = FRAME_RATE * TIME_LENGTH # frames
 # A time varaible to track how far through the animation we are in seconds, used to determine what data to put into the plots
 
+FILTERING_STRENGTH = config_ani.FILTERING_STRENGTH # The strength of the savgol filter (the size of the window)
+
 plt.rcParams['animation.ffmpeg_path'] = config_setup.FFMPEG_PATH
 m = pd.read_csv(os.path.join(config_setup.DATA_WORKING_DIR, config_ani.DATA_FILE_NAME))
 
@@ -61,7 +63,7 @@ class PlotItem:
 
         self.data = m[csv_colum]
         if filtered:
-                self.data = savgol_filter(self.data, 10, 2)
+                self.data = savgol_filter(self.data, FILTERING_STRENGTH, 2)
         self.plotted_data = [] # Starts off empty and grows over time
 
         # Create the empty line object that will be filled out as the animiation runs
@@ -106,21 +108,23 @@ def animate(frame_number):
     global time_cursor
     global time
     time += FRAME_INTERVAL/1000 # time in seconds having a frame interval added to it in ms, so must be adjusted
-    
-    updated_lines = set()
 
-    while time_refference[time_cursor] <= time: # while the time at the cursor is before what needs to be plotted, keep adding data
+    while time_cursor < len(time_refference) and time_refference[time_cursor] <= time: # while the time at the cursor is before what needs to be plotted, keep adding data
         # Add a recording frame to the ploted time, then to each value
         plotted_time.append(time_refference[time_cursor])
         
         for line in lines:
-            updated_lines.add(line.tick())
+            line.tick()
 
-        time_cursor += 1
+        if time_cursor < len(time_refference): # if we will still be in range, go further
+            time_cursor += 1
 
+
+    updated_lines = [line.line for line in lines]
 
     if frame_number % 100 == 0:
-        print(f"Frame {frame_number} of {FRAME_LENGTH} ({round(frame_number/FRAME_LENGTH*100, 2)}%)        ", end='\r')
+        print(f"Frame {frame_number+1} of {FRAME_LENGTH} ({round((frame_number+1)/FRAME_LENGTH*100, 2)}%)        ", end='\r') # we are just adding 1 since it's all zero indexed
+    
     return updated_lines
 
 
@@ -139,9 +143,12 @@ else:
         file = os.path.join(config_setup.DATA_WORKING_DIR, f"{config_ani.DATA_FILE_NAME[:-4]}_animated.mp4")
         writer = animation.FFMpegWriter(fps=FRAME_RATE,metadata=dict(artist='Waterloo Rocketry Team')) 
 
-        print(f"Saving video, this will take at least {TIME_LENGTH}s...")
+        print(f"Saving video, this will take about {TIME_LENGTH}s...")
         ani.save(file, writer=writer)
         print() # newline 
         print('Video saved sucessfully')
     else:
+        print('Previewing animation')
         plt.show()
+        print()
+        print('Animation preview closed')
