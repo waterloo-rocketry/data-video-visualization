@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 ffmpeg
 .DS_Store
+config_setup.py
