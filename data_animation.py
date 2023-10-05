@@ -95,13 +95,17 @@ global_font = {'family':  'helvetica'} # The font of the legend
 ###########################################################################
 
 
+
+# The method for this timing to work is that the animation runs at a certain framerate (converted to a time interval), and a time length
+# For each frame, it'll step up the running time variable by the time interval
+# It must then add all the data who's recorded timestamp is smaller than or equal to the running time variable
 def animate(frame_number):
     global time_cursor
     global time
     time += FRAME_INTERVAL/1000 # time in seconds having a frame interval added to it in ms, so must be adjusted
 
-    while time_refference[time_cursor] <= time: # while the time at the cursor is before what needs to be plotted
-        # Add a recording frame to the plot
+    while time_refference[time_cursor] <= time: # while the time at the cursor is before what needs to be plotted, keep adding data
+        # Add a recording frame to the ploted time, then to each value
         plotted_time.append(time_refference[time_cursor])
         
         for line in lines:
@@ -109,7 +113,6 @@ def animate(frame_number):
 
         time_cursor += 1
 
-    # each line will be update by the update functions and reflected in the animation
 
 # Generate one together legend for each of the curves
 handles = []
@@ -120,28 +123,29 @@ for axis in unit_axies.values():
     handles += h
     labels += l_with_units
 
-
 # Set all the esthetics of the plot
 plt.title(figure_title, fontdict=global_font)
 plt.legend(handles, labels, loc=legend_location, prop=global_font)
 if grid: plt.grid()
 
-# The interval and frames have to add up to the fps set later for the video to be real-time accurate
 
-# Get the current working directory
-file = os.path.join(config_setup.DATA_WORKING_DIR, f"{config_ani.DATA_FILE_NAME[:-4]}_animated.mp4")
-writer = animation.FFMpegWriter(fps=FRAME_RATE,metadata=dict(artist='Waterloo Rocketry Team')) 
-ani = animation.FuncAnimation(fig, animate, interval = FRAME_INTERVAL, frames = FRAME_LENGTH, repeat = False) 
-print(f"Saving video, this will take {TIME_LENGTH}s...")
-ani.save(file, writer=writer) # Comment out this line to get a 'preview' via the matplotlib plot
-# plt.show()
-print('Video saved sucessfully')
+SKIP_TO_FINAL = False # Allows the entire animation step to be skipped and just show you what the final plot looks like
+PREVIEW = False # Allows the animation to be previewed instead of saving it to a file
 
+if SKIP_TO_FINAL:
+    for i in range(FRAME_LENGTH):
+        animate(i)
+    print('Animation skipped, showing final plot')
+    plt.show()
+else:
+    ani = animation.FuncAnimation(fig, animate, interval = FRAME_INTERVAL, frames = FRAME_LENGTH, repeat = False) 
 
-# The method for this timing to work is that the animation runs at a certain framerate (converted to a time interval), and a time length
-# For each frame, it'll step up the running time variable by the time interval
-# It must then add all the data who's recorded timestamp is smaller than or equal to the running time variable
+    if not PREVIEW: # save the file
+        file = os.path.join(config_setup.DATA_WORKING_DIR, f"{config_ani.DATA_FILE_NAME[:-4]}_animated.mp4")
+        writer = animation.FFMpegWriter(fps=FRAME_RATE,metadata=dict(artist='Waterloo Rocketry Team')) 
 
-
-
-#FEATUREADD: make an ability to plot the final graph to see if it looks like what we want
+        print(f"Saving video, this will take at least {TIME_LENGTH}s...")
+        ani.save(file, writer=writer)
+        print('Video saved sucessfully')
+    else:
+        plt.show()
