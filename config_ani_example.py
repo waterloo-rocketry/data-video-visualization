@@ -1,3 +1,6 @@
+## SET YOUR SETTINGS IN A COPY OF THIS CALLED config_ani.py
+
+
 # Drawing settings
 SKIP_TO_FINAL = False # Allows the entire animation step to be skipped and just show you what the final plot looks like
 PREVIEW = False # Allows the animation to be previewed instead of saving it to a file

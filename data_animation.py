@@ -70,6 +70,7 @@ class PlotItem:
     def tick(self): # a tick pushing the data forward one recording frame, and this might happen multiple times per animation frame'
         self.plotted_data.append(self.data[time_cursor])
         self.line.set_data(plotted_time, self.plotted_data)
+        return self.line
 
 # Import graphing settings from config
 unit_axies = {}
@@ -105,15 +106,22 @@ def animate(frame_number):
     global time_cursor
     global time
     time += FRAME_INTERVAL/1000 # time in seconds having a frame interval added to it in ms, so must be adjusted
+    
+    updated_lines = set()
 
     while time_refference[time_cursor] <= time: # while the time at the cursor is before what needs to be plotted, keep adding data
         # Add a recording frame to the ploted time, then to each value
         plotted_time.append(time_refference[time_cursor])
         
         for line in lines:
-            line.tick()
+            updated_lines.add(line.tick())
 
         time_cursor += 1
+
+
+    if frame_number % 100 == 0:
+        print(f"Frame {frame_number} of {FRAME_LENGTH} ({round(frame_number/FRAME_LENGTH*100, 2)}%)        ", end='\r')
+    return updated_lines
 
 
 SKIP_TO_FINAL = config_ani.SKIP_TO_FINAL
@@ -133,6 +141,7 @@ else:
 
         print(f"Saving video, this will take at least {TIME_LENGTH}s...")
         ani.save(file, writer=writer)
+        print() # newline 
         print('Video saved sucessfully')
     else:
         plt.show()
