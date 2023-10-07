@@ -74,3 +74,12 @@ if ENDING_TIME == None and LENGTH_TIME == None:
 
 if ENDING_TIME != None and LENGTH_TIME != None:
     raise ValueError("You must define either the ending time or the length of the animation, not both")
+
+# Check for multiple primary axies
+primary_axies = 0
+for axis in AXIES.values():
+    if axis["primary"]:
+        primary_axies += 1
+
+if primary_axies > 1:
+    raise ValueError("You can only have one primary axis")
