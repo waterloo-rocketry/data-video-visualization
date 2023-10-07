@@ -8,8 +8,17 @@ from matplotlib.animation import FuncAnimation, writers
 # from mat
 from scipy.signal import savgol_filter
 
-import config_setup
-import config_ani
+try:
+    import config_setup
+except ModuleNotFoundError:
+    print("config_setup.py not found, please copy config_setup_example.py to config_setup.py and set your values there")
+    exit()
+
+try:
+    import config_ani
+except ModuleNotFoundError:
+    print("config_ani.py not found, please copy config_ani_example.py to config_ani.py and set your values there. See README.md for instructions on how to set configuration")
+    exit()
 
 FRAME_RATE = config_ani.FRAME_RATE # fps
 STARTING_TIME = config_ani.STARTING_TIME # The time at which the data starts recording
