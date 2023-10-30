@@ -132,6 +132,8 @@ dmypy.json
 # (/working_directry included so as to allow the user to work on both the code and animations)
 ffmpeg
 .DS_Store
-config_setup.py
-config_ani.py
 /working_directory 
+
+/config/*
+!config/config_ani_example.py
+!config/config_setup_example.py

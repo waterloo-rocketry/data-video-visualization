@@ -7,7 +7,7 @@ from matplotlib.animation import FuncAnimation
 from scipy.signal import savgol_filter
 
 try:
-    import config_setup
+    import config.config_setup as config_setup
 except ModuleNotFoundError:
     print(
         "config_setup.py not found, please copy config_setup_example.py to config_setup.py" +\
@@ -16,7 +16,7 @@ except ModuleNotFoundError:
     exit()
 
 try:
-    import config_ani
+    import config.config_ani as config_ani
 except ModuleNotFoundError:
     print(
         "config_ani.py not found, please copy config_ani_example.py to config_ani.py and" +\

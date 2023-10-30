@@ -68,7 +68,11 @@ PLOT_ITEMS = {
 }
 
 
-# Config checks
+
+
+
+
+# Config checks - DO NOT EDIT BELOW THIS LINE
 
 if ENDING_TIME == None and LENGTH_TIME == None:
     raise ValueError("You must define either the ending time or the length of the animation")
