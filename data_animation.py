@@ -2,16 +2,16 @@ from matplotlib import pyplot as plt
 import matplotlib.animation as animation
 import pandas as pd
 import math
-import copy
 import os
-from matplotlib.animation import FuncAnimation, writers
+from matplotlib.animation import FuncAnimation
 from scipy.signal import savgol_filter
 
 try:
     import config_setup
 except ModuleNotFoundError:
     print(
-        "config_setup.py not found, please copy config_setup_example.py to config_setup.py and set your values there"
+        "config_setup.py not found, please copy config_setup_example.py to config_setup.py" +\
+            "and set your values there"
     )
     exit()
 
@@ -19,7 +19,8 @@ try:
     import config_ani
 except ModuleNotFoundError:
     print(
-        "config_ani.py not found, please copy config_ani_example.py to config_ani.py and set your values there. See README.md for instructions on how to set configuration"
+        "config_ani.py not found, please copy config_ani_example.py to config_ani.py and" +\
+             " set your values there. See README.md for instructions on how to set configuration"
     )
     exit()
 
@@ -61,7 +62,9 @@ class PlotAxis:
             self.axis = plt.twinx()
         self.axis.set_ylabel(f"{display_name} ({unit})")
         self.axis.set_xlabel("Time (s)")
-        self.axis.set_xlim(STARTING_TIME, ENDING_TIME)
+        starting_time_actual = STARTING_TIME - config_ani.START_TIME_GRAPHICAL_OFFSET
+        ending_time_actual = ENDING_TIME - config_ani.START_TIME_GRAPHICAL_OFFSET
+        self.axis.set_xlim(starting_time_actual, ending_time_actual)
         self.axis.set_ylim(min, max)
 
 
@@ -81,10 +84,12 @@ class PlotItem:
         # Create the empty line object that will be filled out as the animiation runs
         self.line = self.axis.plot([], [], label=f"{display_name}", color=color)[0]
 
-    """a tick pushing the data forward one recording frame, and this might happen multiple times per animation frame"""
+    """a tick pushing the data forward one recording frame, and this might happen multiple 
+    times per animation frame"""
     def tick(self):
         self.plotted_data.append(self.data[time_cursor])
-        self.line.set_data(plotted_time, self.plotted_data)
+        plotted_time_modified = [ts - config_ani.START_TIME_GRAPHICAL_OFFSET for ts in plotted_time]
+        self.line.set_data(plotted_time_modified, self.plotted_data)
         return self.line
 
 
@@ -130,15 +135,19 @@ for axis in unit_axies.values():
 plt.legend(handles, labels, loc=config_ani.LEGEND_LOCATION, prop=config_ani.GLOBAL_FONT)
 
 
-# The method for this timing to work is that the animation runs at a certain framerate (converted to a time interval), and a time length
+# The method for this timing to work is that the animation runs at a certain framerate 
+# (converted to a time interval), and a time length
 # For each frame, it'll step up the running time variable by the time interval
-# It must then add all the data who's recorded timestamp is smaller than or equal to the running time variable
+# It must then add all the data who's recorded timestamp is smaller than or equal to the
+# running time variable
 def animate(frame_number):
     global time_cursor
     global time
     time += FRAME_INTERVAL / 1000  # adjusting to ms
 
-    while (time_cursor < len(time_refference) and time_refference[time_cursor] <= time):  # keep adding while not caught up
+
+    # keep adding while not caught up
+    while (time_cursor < len(time_refference) and time_refference[time_cursor] <= time):  
         # Add a recording frame to the ploted time, then to each value
         plotted_time.append(time_refference[time_cursor])
 
@@ -152,7 +161,8 @@ def animate(frame_number):
 
     if frame_number % 100 == 0:
         print(
-            f"Frame {frame_number+1} of {FRAME_LENGTH} ({round((frame_number+1)/FRAME_LENGTH*100, 2)}%)        ",
+            f"Frame {frame_number+1} of {FRAME_LENGTH}" +\
+                f"({round((frame_number+1)/FRAME_LENGTH*100, 2)}%)        ",
             end="\r",
         )  # add 1 to frame counts to adjust for 0 index
 

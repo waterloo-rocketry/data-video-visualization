@@ -6,6 +6,7 @@ Example of config from LCF1 is included, and should be used as a template for fu
 ## Setup
 
 - Install all the python requirements with `pip install -r requirements.txt`
+- Ensure that the font being used is installed
 - Make a copy of `config_setup_example.py` and rename it to `config_setup.py`
 - Download ffmpeg from https://ffmpeg.org/download.html
 - Place the FFMPEG executable wherever you want (we recomend in the same directory as the python script)
@@ -16,7 +17,7 @@ Example of config from LCF1 is included, and should be used as a template for fu
 - Place the data you want to visualize (csv) in the `working_directory` folder
 - Make a copy of `config_ani_example.py` and rename it to `config_ani.py`. This is where you will set the config settings for the animation to be rendered
 - Set the animation settings (see animation config section below)
-- Run the script with `python data_video_visualization.py`
+- Run the script with `python data_animation.py` (from the root directory of `\data-video-visualization`)
 - Depending on your config settings, the animation will either be saved to a file in `working_directory` or displayed in a window
 
 ## Animation Config
@@ -92,3 +93,21 @@ Define a dictionary in `config_ani.py` called `PLOT_ITEMS` with the following fo
 - `axis` is the name of the axis that the line is attached to. It should be the name of an axis that you defined in the `AXIES` dictionary (ex: `psi`)
 - `color` is the color of the line. It should be a string that can be used in a matplotlib plot (ex: `#ff0000`, or `"red"`)
 - `filtered` is a boolean that describes wether or not the line should be filtered. If it is set to `True`, the line will be filtered with a savgol filter with a window size of `FILTERING_STRENGTH` (see rendering settings). If it is set to `False`, the line will not be filtered. We recomend keeping this on for most applications
+
+
+## Troubleshooting
+
+### Fonts not found
+
+The simple remedy is to install the correct font. The font has to match exactly. For example, helvetica (the default font) might be installed as a variant (such as Helvetica Neue). A link to a verified install of helvetica (tested on Windows) is provided below:
+
+https://dwl.freefontsfamily.com/download/Helvetica-Font/#google_vignette
+
+Additionally, the following issue must be addressed:
+
+https://stackoverflow.com/questions/26085867/matplotlib-font-not-found
+
+Where the .json cache of matplotlib must be deleted so that a re-build of the cache is forced, picking up the newly installed font.
+
+If neither of these options work and a export is urgently required, the direct solution of removing the font specification arguments inside the code will also work.
+
