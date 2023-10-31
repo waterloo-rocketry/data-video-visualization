@@ -41,8 +41,9 @@ Most configuration is specific to each animation, and therefore has to be redone
 ### Data settings
 
 - `DATA_FILE_NAME` is the name of the csv file to be read from. It should be in the `working_directory` folder, or whichever is specified in `DATA_WORKING_DIR` in the `config_setup.py` file
-- `STARTING TIME` is the time in seconds that the animation will start reading data from the CSV at. This should be set to the second of the first line in the CSV usually, but can then be adjusted to crop out data according to your needs
+- `STARTING_TIME` is the time in seconds that the animation will start reading data from the CSV at. This should be set to the second of the first line in the CSV usually, but can then be adjusted to crop out data according to your needs
 - `ENDING_TIME` / `LENGTH_TIME` you can set one or the other, but not both. `ENDING_TIME` is the time in seconds that the animation will stop reading data from the CSV at. `LENGTH_TIME` is the length of the animation in seconds. Set the other to `None` to use the one you want
+- `START_TIME_GRAPHICAL_OFFSET` is an amount of time subtracted from the recorded times when displaying the graph (so that for example starting time is always 0 if it's equal to the STARTING_TIME)
 - `FIGURE_TITLE` is the title of the plot. It can be anything you want, but we recomend something like "SF 6" or "LCF 4 (Combined)"
 
 ### Axies and lines

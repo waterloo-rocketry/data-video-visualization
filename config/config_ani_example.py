@@ -13,7 +13,7 @@ FILTERING_STRENGTH = 50 # The size of the savgol filter window, bigger means its
 # Animation config
 FRAME_RATE = 60 # (fps)
 STARTING_TIME = 2280 # The time of recording timestamps that the data starts (seconds)
-START_TIME_GRAPHICAL_OFFSET = 2280 # To control the graphical time dispay (e.g. to have the graph start at 0)
+START_TIME_GRAPHICAL_OFFSET = 2280 # To control the graphical time dispay (e.g. to have the graph start at 0), subtracted from the time values recorded
 
 # You can either define the ending time, or the length of the animation, set the other to None
 ENDING_TIME = None # The time of recording timestamps that the data ends (seconds)
