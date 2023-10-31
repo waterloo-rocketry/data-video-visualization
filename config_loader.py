@@ -1,8 +1,8 @@
 from yaml import safe_load
 from os.path import exists
 
-"""Load and execute checks on the setup configuration file"""
 def load_config_setup() -> dict:
+    """Load and execute checks on the setup configuration file"""
     try:
         with open("config/config_setup.yaml", "r") as file:
             config_setup = safe_load(file)
@@ -18,8 +18,8 @@ def load_config_setup() -> dict:
 
     return config_setup
 
-"""Load and execute checks on the animation configuration file"""
 def load_config_ani() -> dict:
+    """Load and execute checks on the animation configuration file"""
     try:
         with open("config/config_ani.yaml", "r") as file:
             config_ani = safe_load(file)

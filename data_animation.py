@@ -44,10 +44,10 @@ class PlotItem:
         # Create the empty line object that will be filled out as the animiation runs
         self.line = self.axis.plot([], [], label=f"{display_name}", color=color)[0]
 
-    """a tick pushing the data forward one recording frame, and this might happen multiple 
-    times per animation frame.
-    """
     def tick(self, time_cursor, plotted_time):
+        """a tick pushing the data forward one recording frame, and this might happen multiple 
+        times per animation frame.
+        """
         # print(plotted_time)
         self.plotted_data.append(self.data[time_cursor])
         plotted_time_modified = [ts - self.config_ani.START_TIME_GRAPHICAL_OFFSET 
@@ -99,13 +99,13 @@ class DataAnimator:
         self.INTERVAL_PERCENT =  (self.LOGGING_INTERVAL/self.config_ani.FRAME_LENGTH) * 100
         pass
 
-    """The method for this timing to work is that the animation runs at a certain framerate
-    (converted to a time interval), and a time length.
-
-    For each frame, it'll step up the running time variable by the time interval.
-    It must then add all the data who's recorded timestamp is smaller than or equal to the
-    running time variable. """
     def animate(self, frame_number):
+        """The method for this timing to work is that the animation runs at a certain framerate
+        (converted to a time interval), and a time length.
+
+        For each frame, it'll step up the running time variable by the time interval.
+        It must then add all the data who's recorded timestamp is smaller than or equal to the
+        running time variable. """
         self.time += self.config_ani.FRAME_INTERVAL / 1000  # adjusting to ms
 
 
@@ -162,8 +162,9 @@ class DataAnimator:
         return updated_lines
 
 
-    """Main method for creating an animation."""
     def create_animation(self):
+        """Main method for creating an animation."""
+
 
         plt.rcParams["animation.ffmpeg_path"] = self.config_setup.FFMPEG_PATH
         m = pd.read_csv(os.path.join(self.config_setup.DATA_WORKING_DIR, \
@@ -262,7 +263,7 @@ class DataAnimator:
                 print()
                 print("Animation preview closed")
 
-"""Wrapper method for creating a DataAnimator instance and running its main function"""
 def data_visualizer_execute():
+    """Wrapper method for creating a DataAnimator instance and running its main function"""
     animator = DataAnimator()
     animator.create_animation()
