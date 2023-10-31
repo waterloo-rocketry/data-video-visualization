@@ -7,17 +7,17 @@ Example of config from LCF1 is included, and should be used as a template for fu
 
 - Install all the python requirements with `pip install -r requirements.txt`
 - Ensure that the font being used is installed
-- Make a copy of `config_setup_example.py` and rename it to `config_setup.py`
+- Make a copy of `config_setup_example.yaml` and rename it to `config_setup.yaml`
 - Download ffmpeg from https://ffmpeg.org/download.html
 - Place the FFMPEG executable wherever you want (we recomend in the same directory as the python script)
-- Set the FFMPEG executable path in the `config_setup.py` file `FFMPEG_PATH = "path/to/ffmpeg/executable"`
+- Set the FFMPEG executable path in the `config_setup.yaml` file `FFMPEG_PATH = "path/to/ffmpeg/executable"`
   
 ## Usage
 
 - Place the data you want to visualize (csv) in the `working_directory` folder
-- Make a copy of `config_ani_example.py` and rename it to `config_ani.py`. This is where you will set the config settings for the animation to be rendered
+- Make a copy of `config_ani_example.yaml` and rename it to `config_ani.yaml`. This is where you will set the config settings for the animation to be rendered
 - Set the animation settings (see animation config section below)
-- Run the script with `python data_animation.py` (from the root directory of `\data-video-visualization`)
+- Run the script with `python main.py` (from the root directory of `\data-video-visualization`)
 - Depending on your config settings, the animation will either be saved to a file in `working_directory` or displayed in a window
 
 ## Animation Config
@@ -58,8 +58,8 @@ You will have to configure the axies and lines for each differnt animation you w
 
 Define a dictionary in `config_ani.py` called `AXIES` with the following format for each entry:
 
-```python
-"name": {
+```yaml
+"name" : {
     "display_name": "Display name",
     "unit": "unit",
     "min": min,
@@ -80,7 +80,7 @@ When axies are of similar scale, they can be combined into one axis. For example
 
 Define a dictionary in `config_ani.py` called `PLOT_ITEMS` with the following format for each entry:
 
-```python
+```yaml
 "Display Name": {
     "csv_column": "csv_column",
     "axis": "axis",

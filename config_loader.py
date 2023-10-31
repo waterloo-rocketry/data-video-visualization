@@ -3,14 +3,14 @@ from os.path import exists
 
 """Load and execute checks on the setup configuration file"""
 def load_config_setup() -> dict:
-    
+
     try:
-        with open("config_setup.yaml", "r") as file:
+        with open("config/config_setup.yaml", "r") as file:
             config_setup = safe_load(file)
     except ModuleNotFoundError:
         raise RuntimeError(
-            "config_setup.yaml not found, please copy config_setup_example.yaml to config_setup.yaml" +\
-                "and set your values there"
+            "config_setup.yaml not found, please copy config_setup_example.yaml " +\
+                "to config_setup.yaml and set your values there"
         )
 
     ffmpeg_path_valid = exists(config_setup['FFMPEG_PATH'])
@@ -22,20 +22,21 @@ def load_config_setup() -> dict:
 """Load and execute checks on the animation configuration file"""
 def load_config_ani() -> dict:
     try:
-        with open("config_ani.yaml", "r") as file:
+        with open("config/config_ani.yaml", "r") as file:
             config_ani = safe_load(file)
     except ModuleNotFoundError:
         raise RuntimeError(
             "config_ani.py not found, please copy config_ani_example.yaml to config_ani.yaml and" +\
                 " set your values there. See README.md for instructions on how to set configuration"
         )
-    
-    
+
+
     if config_ani["ENDING_TIME"] == None and config_ani["LENGTH_TIME"] == None:
         raise ValueError("You must define either the ending time or the length of the animation")
 
     if config_ani["ENDING_TIME"] != None and config_ani["LENGTH_TIME"] != None:
-        raise ValueError("You must define either the ending time or the length of the animation, not both")
+        raise ValueError("You must define either the ending time or " +\
+                         "the length of the animation, not both")
 
 
     # Check for multiple primary axies

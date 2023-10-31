@@ -50,7 +50,9 @@ class PlotItem:
     def tick(self, time_cursor, plotted_time):
         # print(plotted_time)
         self.plotted_data.append(self.data[time_cursor])
-        plotted_time_modified = [ts - self.config_ani.START_TIME_GRAPHICAL_OFFSET for ts in plotted_time]
+        plotted_time_modified = [ts - self.config_ani.START_TIME_GRAPHICAL_OFFSET 
+                                    for ts in plotted_time]
+
         self.line.set_data(plotted_time_modified, self.plotted_data)
         return self.line
 
@@ -70,7 +72,7 @@ class ConfigAni:
             self.TRUE_ENDING_TIME = self.STARTING_TIME + self.LENGTH_TIME
         else:
             # The time at which the data stops recording
-            self.TRUE_ENDING_TIME =  self.ENDING_TIME  
+            self.TRUE_ENDING_TIME =  self.ENDING_TIME
 
         self.TIME_LENGTH = self.TRUE_ENDING_TIME - self.STARTING_TIME  # seconds
         self.FRAME_INTERVAL = math.floor(1000 / self.FRAME_RATE)  # ms
@@ -97,7 +99,7 @@ class DataAnimator:
         self.INTERVAL_PERCENT =  (self.LOGGING_INTERVAL/self.config_ani.FRAME_LENGTH) * 100
         pass
 
-    """The method for this timing to work is that the animation runs at a certain framerate 
+    """The method for this timing to work is that the animation runs at a certain framerate
     (converted to a time interval), and a time length.
 
     For each frame, it'll step up the running time variable by the time interval.
@@ -109,7 +111,7 @@ class DataAnimator:
 
         # keep adding while not caught up
         while (self.time_cursor < len(self.time_reference) and 
-                self.time_reference[self.time_cursor] <= self.time):  
+                self.time_reference[self.time_cursor] <= self.time):
 
             # Add a recording frame to the ploted time, then to each value
             self.plotted_time.append(self.time_reference[self.time_cursor])
@@ -117,7 +119,7 @@ class DataAnimator:
             for line in self.lines:
                 line.tick(self.time_cursor, self.plotted_time)
 
-            if self.time_cursor < len(self.time_reference): 
+            if self.time_cursor < len(self.time_reference):
                 self.time_cursor += 1
 
         updated_lines = [line.line for line in self.lines]
@@ -127,11 +129,11 @@ class DataAnimator:
 
         ## Log the render progress
         if (frame_number + 1) % self.LOGGING_INTERVAL == 0:
-            
+
             # add 1 to frame counts to adjust for 0 index
             percent_completed = round((frame_number + 1)/self.config_ani.FRAME_LENGTH*100, 2)
-            print_message_frames = f"Rendering frame {frame_number + 1} of {self.config_ani.FRAME_LENGTH}" +\
-                    f" ({percent_completed}%)"
+            print_message_frames = f"Rendering frame {frame_number + 1}" +\
+                    f" of {self.config_ani.FRAME_LENGTH} ({percent_completed}%)"
 
             ## Handle a non-cringers way of estimating remaining time
             if self.prev_timer_value == -1:
@@ -141,10 +143,11 @@ class DataAnimator:
             else:
                 timer_duration = (perf_counter() - self.prev_timer_value) # value in seconds
                 percent_remaining = 100.0 - percent_completed
-                
+
                 remaining_time_estimate = timer_duration*(percent_remaining/self.INTERVAL_PERCENT)
                 print_message_timing = f"Time to render frame batch: {round(timer_duration, 2)} s"
-                print_message_estimate = f"Estimated time remaining: {round(remaining_time_estimate, 2)} s"
+                print_message_estimate = \
+                    f"Estimated time remaining: {round(remaining_time_estimate, 2)} s"
 
 
                 self.prev_timer_value = perf_counter() # reset timer
@@ -152,9 +155,9 @@ class DataAnimator:
             print_message = print_message_frames + '  |  ' + print_message_timing
             print_message = print_message + '  |  ' + print_message_estimate
 
-            print_message = print_message + " "*10 # For clearing stray chars during carriage return
+            print_message = print_message + " "*10 # For clearing stray chars by carriage return
 
-            print(print_message, end="\r")  
+            print(print_message, end="\r")
 
         return updated_lines
 
@@ -163,7 +166,8 @@ class DataAnimator:
     def create_animation(self):
 
         plt.rcParams["animation.ffmpeg_path"] = self.config_setup.FFMPEG_PATH
-        m = pd.read_csv(os.path.join(self.config_setup.DATA_WORKING_DIR, self.config_ani.DATA_FILE_NAME))
+        m = pd.read_csv(os.path.join(self.config_setup.DATA_WORKING_DIR, \
+                                     self.config_ani.DATA_FILE_NAME))
 
         # Set the dimensions of the plot
         plt.rcParams["figure.figsize"] = (self.config_ani.PLOT_WIDTH, self.config_ani.PLOT_HEIGHT)
@@ -204,7 +208,7 @@ class DataAnimator:
                 )
             )
 
-        
+
         if self.config_ani.FIGURE_GRID:
             plt.grid()
 
@@ -219,7 +223,8 @@ class DataAnimator:
             handles += h
             labels += l_with_units
 
-        plt.legend(handles, labels, loc=self.config_ani.LEGEND_LOCATION, prop=self.config_ani.GLOBAL_FONT)
+        plt.legend(handles, labels, loc=self.config_ani.LEGEND_LOCATION,
+                    prop=self.config_ani.GLOBAL_FONT)
 
         if self.config_ani.SKIP_TO_FINAL:
             for i in range(self.config_ani.FRAME_LENGTH):
@@ -228,8 +233,8 @@ class DataAnimator:
             plt.show()
         else:
             ani = animation.FuncAnimation(
-                self.fig, self.animate, 
-                interval=self.config_ani.FRAME_INTERVAL, 
+                self.fig, self.animate,
+                interval=self.config_ani.FRAME_INTERVAL,
                 frames=self.config_ani.FRAME_LENGTH, repeat=False
             )
 
