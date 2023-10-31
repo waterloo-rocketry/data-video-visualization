@@ -1,3 +1,4 @@
-from data_animation import run_animation
+from data_animation import data_visualizer_execute
 
-run_animation()
+if __name__ == "__main__":
+    data_visualizer_execute()
