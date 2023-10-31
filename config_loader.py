@@ -3,7 +3,6 @@ from os.path import exists
 
 """Load and execute checks on the setup configuration file"""
 def load_config_setup() -> dict:
-
     try:
         with open("config/config_setup.yaml", "r") as file:
             config_setup = safe_load(file)
@@ -49,7 +48,3 @@ def load_config_ani() -> dict:
         raise ValueError("You can only have one primary axis")
 
     return config_ani
-
-
-
-

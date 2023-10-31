@@ -95,7 +95,6 @@ Define a dictionary in `config_ani.py` called `PLOT_ITEMS` with the following fo
 - `color` is the color of the line. It should be a string that can be used in a matplotlib plot (ex: `#ff0000`, or `"red"`)
 - `filtered` is a boolean that describes wether or not the line should be filtered. If it is set to `True`, the line will be filtered with a savgol filter with a window size of `FILTERING_STRENGTH` (see rendering settings). If it is set to `False`, the line will not be filtered. We recomend keeping this on for most applications
 
-
 ## Troubleshooting
 
 ### Fonts not found
@@ -111,4 +110,3 @@ https://stackoverflow.com/questions/26085867/matplotlib-font-not-found
 Where the .json cache of matplotlib must be deleted so that a re-build of the cache is forced, picking up the newly installed font.
 
 If neither of these options work and a export is urgently required, the direct solution of removing the font specification arguments inside the code will also work.
-
