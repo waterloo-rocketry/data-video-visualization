@@ -16,8 +16,8 @@ FRAME_RATE : 60 # (fps)
 STARTING_TIME : 2280 # The time of recording timestamps that the data starts (seconds)
 START_TIME_GRAPHICAL_OFFSET : 2280 # To control the graphical time dispay (e.g. to have the graph start at 0), subtracted from the time values recorded
 
-# You can either define the ending time, or the length of the animation, set the other to None
-ENDING_TIME : None # The time of recording timestamps that the data ends (seconds)
+# You can either define the ending time, or the length of the animation, set the other to null
+ENDING_TIME : null # The time of recording timestamps that the data ends (seconds)
 LENGTH_TIME : 80 # The length of the animation (seconds)
 
 # Plot config
