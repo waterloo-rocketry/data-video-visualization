@@ -172,31 +172,36 @@ def animate(frame_number):
 SKIP_TO_FINAL = config_ani.SKIP_TO_FINAL
 PREVIEW = config_ani.PREVIEW
 
-if SKIP_TO_FINAL:
-    for i in range(FRAME_LENGTH):
-        animate(i)
-    print("Animation skipped, showing final plot")
-    plt.show()
-else:
-    ani = animation.FuncAnimation(
-        fig, animate, interval=FRAME_INTERVAL, frames=FRAME_LENGTH, repeat=False
-    )
-
-    if not PREVIEW:  # save the file
-        file = os.path.join(
-            config_setup.DATA_WORKING_DIR,
-            f"{config_ani.DATA_FILE_NAME[:-4]}_animated.mp4",
-        )
-        writer = animation.FFMpegWriter(
-            fps=FRAME_RATE, metadata=dict(artist="Waterloo Rocketry Team")
-        )
-
-        print(f"Saving video, this will take about {TIME_LENGTH}s...")
-        ani.save(file, writer=writer)
-        print()  # newline
-        print("Video saved sucessfully")
-    else:
-        print("Previewing animation")
+def run_animation():
+    if SKIP_TO_FINAL:
+        for i in range(FRAME_LENGTH):
+            animate(i)
+        print("Animation skipped, showing final plot")
         plt.show()
-        print()
-        print("Animation preview closed")
+    else:
+        ani = animation.FuncAnimation(
+            fig, animate, interval=FRAME_INTERVAL, frames=FRAME_LENGTH, repeat=False
+        )
+
+        if not PREVIEW:  # save the file
+            file = os.path.join(
+                config_setup.DATA_WORKING_DIR,
+                f"{config_ani.DATA_FILE_NAME[:-4]}_animated.mp4",
+            )
+            writer = animation.FFMpegWriter(
+                fps=FRAME_RATE, metadata=dict(artist="Waterloo Rocketry Team")
+            )
+
+            print(f"Saving video, this will take about {TIME_LENGTH}s...")
+            ani.save(file, writer=writer)
+            print()  # newline
+            print("Video saved sucessfully")
+        else:
+            print("Previewing animation")
+            plt.show()
+            print()
+            print("Animation preview closed")
+
+
+if __name__ == "__main__":
+    run_animation()
