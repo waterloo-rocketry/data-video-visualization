@@ -45,10 +45,10 @@ class PlotItem:
         self.line = self.axis.plot([], [], label=f"{display_name}", color=color)[0]
 
     def tick(self, time_cursor, plotted_time):
-        """a tick pushing the data forward one recording frame, and this might happen multiple 
+        """a tick pushing the data forward in an line one recording frame, and this might happen multiple 
         times per animation frame.
         """
-        # print(plotted_time)
+
         self.plotted_data.append(self.data[time_cursor])
         plotted_time_modified = [ts - self.config_ani.START_TIME_GRAPHICAL_OFFSET 
                                     for ts in plotted_time]
@@ -179,7 +179,7 @@ class DataAnimator:
         self.time_cursor = 0
         self.time = self.config_ani.STARTING_TIME  # animiation progress in seconds
 
-        self.fig, _ = plt.subplots()
+        self.fig = plt.subplots()[0]
 
 
         # Import graphing settings from config
