@@ -135,7 +135,5 @@ ffmpeg
 /working_directory 
 
 /config/*
-!config/config_ani_example.py
-!config/config_setup_example.py
 !config/config_ani_example.yaml
 !config/config_setup_example.yaml

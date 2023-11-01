@@ -15,6 +15,10 @@ def load_config_setup() -> dict:
     ffmpeg_path_valid = exists(config_setup['FFMPEG_PATH'])
     if not ffmpeg_path_valid:
         raise FileNotFoundError("FFMPEG path not set correctly, the system is unable to find it")
+    
+    working_dir_valid = exists(config_setup['DATA_WORKING_DIR'])
+    if not working_dir_valid:
+        raise FileNotFoundError(f"Working directory not set correctly, the system is unable to find it. Make sure '{config_setup['DATA_WORKING_DIR']}' exists under this script's directory")
 
     return config_setup
 
