@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Project files & custom ignores
+# (/working_directry included so as to allow the user to work on both the code and animations)
+ffmpeg
+.DS_Store
+/working_directory 
+
+/config/*
+!config/config_ani_example.yaml
+!config/config_setup_example.yaml

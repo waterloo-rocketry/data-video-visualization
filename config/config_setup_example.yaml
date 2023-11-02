@@ -1,0 +1,6 @@
+---
+## SET YOUR VALUES IN A COPY OF THIS CALLED config_setup.yaml
+
+# Setup config
+FFMPEG_PATH: "/Users/aa/Documents/Dev/data-video-visualization/ffmpeg" # This should be the path to the executable file for ffmpeg
+DATA_WORKING_DIR: "working_directory" # Where data files will be read from, and videos output to
